@@ -7,8 +7,6 @@ GO
 
 /*
 
-  Nowember2022?
-
  ╭────────────────────────────────────────────────────────────────────────────────────────────────╮
  │                                                                                                │
  │          AUTHOR:  Aaron Priesterroth                                                           │
@@ -19,8 +17,8 @@ GO
  │                                                                                                │
  │     DESCRIPTION:  This procedure sets the compatibility level of all user databases to a       │
  │    ─────────────  specific value. Databases to be excluded can be specified with the           │
- │	                 @excluded_databases parameter. Database Names need to be supplied as a       │
- │					 comma-separated list of names: E.g.: 'Database1,Database2,Database3'.        │
+ │                   @excluded_databases parameter. Database Names need to be supplied as a       │
+ │                   comma-separated list of names: E.g.: 'Database1,Database2,Database3'.        │
  │                                                                                                │
  │                   If no compatibility level is specified, level 150 (= 2019) will be used.     │
  │                                                                                                │

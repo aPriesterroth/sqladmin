@@ -16,8 +16,8 @@ GO
  │                                                                                                │
  │     DESCRIPTION:  This procedure sets a specific server principal (login) as the owner of      │
  │    ─────────────  every user database and adds the previous owner of the database to the       │
- │	                 db_owner role, ensuring no loss of permission due to the change in           │
- │					 ownership.                                                                   │
+ │                   db_owner role, ensuring no loss of permission due to the change in           │
+ │                   ownership.                                                                   │
  │                                                                                                │
  │                   If no server principal is specified, the 'sa' login is used.                 │
  │                                                                                                │
