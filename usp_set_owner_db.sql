@@ -1,4 +1,5 @@
-﻿SET ANSI_NULLS ON
+
+SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
@@ -51,7 +52,11 @@ BEGIN
 	IF (EXISTS(SELECT 1 FROM [sys].[server_principals] WHERE [name] = @db_owner_new))
 	BEGIN
 		-- Select all user databases that are not owned by the server principal specified
-		SELECT [name], [owner_sid] INTO [#dbs] FROM [sys].[databases] WHERE [database_id] > 4 AND [owner_sid] <> SUSER_SID(@db_owner_new);
+		SELECT [name], [owner_sid] INTO [#dbs] FROM [sys].[databases] WHERE [database_id] > 4 AND [owner_sid] <> SUSER_SID(@db_owner_new) AND [name] NOT IN (SELECT [database_name]  FROM sys.dm_hadr_availability_group_states States 
+																	INNER JOIN master.sys.availability_groups Groups ON States.group_id = Groups.group_id
+																	INNER JOIN sys.availability_databases_cluster AGDatabases ON Groups.group_id = AGDatabases.group_id
+																	WHERE primary_replica != @@Servername)
+
 
 		WHILE(EXISTS(SELECT 1 FROM [#dbs]))
 		BEGIN
@@ -97,5 +102,3 @@ The login name ' + QUOTENAME(@db_owner_new) + ' could not be found.';
 	END;
 END
 GO
-
-
