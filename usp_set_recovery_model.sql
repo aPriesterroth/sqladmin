@@ -1,4 +1,3 @@
-﻿
 SET ANSI_NULLS ON
 GO
 
@@ -47,7 +46,11 @@ BEGIN
 
        IF (@recovery_model IN ('FULL', 'BULK_LOGGED', 'SIMPLE'))
        BEGIN
-             SELECT [name] INTO [#dbs] FROM [sys].[databases] WHERE [database_id] > 4 AND [recovery_model_desc] <> @recovery_model;
+             SELECT [name] INTO [#dbs] FROM [sys].[databases] WHERE [database_id] > 4 AND [recovery_model_desc] <> @recovery_model AND [name] NOT IN (SELECT [database_name]  FROM sys.dm_hadr_availability_group_states States 
+																	INNER JOIN master.sys.availability_groups Groups ON States.group_id = Groups.group_id
+																	INNER JOIN sys.availability_databases_cluster AGDatabases ON Groups.group_id = AGDatabases.group_id
+																	WHERE primary_replica != @@Servername);
+
 
              WHILE(EXISTS(SELECT 1 FROM #dbs))
              BEGIN
@@ -70,5 +73,3 @@ Recovery model ' + QUOTENAME(@recovery_model) + ' is unknown.';
        END;
 END
 GO
-
-
