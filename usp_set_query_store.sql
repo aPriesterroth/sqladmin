@@ -1,4 +1,3 @@
-﻿
 SET ANSI_NULLS ON
 GO
 
@@ -48,7 +47,10 @@ BEGIN
 
 	IF (@operation_mode IN ('READ_WRITE', 'READ_ONLY', 'OFF'))
 	BEGIN
-		SELECT [name] INTO [#dbs] FROM [sys].[databases] WHERE [database_id] > 4;
+		SELECT [name] INTO [#dbs] FROM [sys].[databases] WHERE [database_id] > 4 AND [name] NOT IN (SELECT [database_name]  FROM sys.dm_hadr_availability_group_states States 
+																	INNER JOIN master.sys.availability_groups Groups ON States.group_id = Groups.group_id
+																	INNER JOIN sys.availability_databases_cluster AGDatabases ON Groups.group_id = AGDatabases.group_id
+																	WHERE primary_replica != @@Servername);
 
 		WHILE(EXISTS(SELECT 1 FROM #dbs))
 		BEGIN
@@ -87,5 +89,3 @@ Operation mode ' + QUOTENAME(@operation_mode) + ' is unknown.';
 	END;
 END
 GO
-
-
