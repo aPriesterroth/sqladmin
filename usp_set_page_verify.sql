@@ -1,4 +1,3 @@
-﻿
 SET ANSI_NULLS ON
 GO
 
@@ -6,7 +5,6 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 /*
-
  ╭────────────────────────────────────────────────────────────────────────────────────────────────╮
  │                                                                                                │
  │          AUTHOR:  Aaron Priesterroth                                                           │
@@ -33,7 +31,6 @@ GO
  │                                                                                                │
  │                                                                                                │
  ╰────────────────────────────────────────────────────────────────────────────────────────────────╯
-
 */
 
 CREATE OR ALTER   PROCEDURE [dbo].[usp_set_page_verify]
@@ -49,7 +46,10 @@ BEGIN
 
 	IF (@page_verify_option IN ('CHECKSUM', 'TORN_PAGE_DETECTION', 'NONE'))
 	BEGIN
-	   	SELECT [name] INTO [#dbs] FROM [sys].[databases] WHERE [database_id] > 4 AND page_verify_option_desc <> @page_verify_option;
+	   	SELECT [name] INTO [#dbs] FROM [sys].[databases] WHERE [database_id] > 4 AND page_verify_option_desc <> @page_verify_option AND [name] NOT IN (SELECT [database_name]  FROM sys.dm_hadr_availability_group_states States 
+																	INNER JOIN master.sys.availability_groups Groups ON States.group_id = Groups.group_id
+																	INNER JOIN sys.availability_databases_cluster AGDatabases ON Groups.group_id = AGDatabases.group_id
+																	WHERE primary_replica != @@Servername);
 
 		WHILE(EXISTS(SELECT 1 FROM #dbs))
 		BEGIN
@@ -72,5 +72,3 @@ Page verify option ' + QUOTENAME(@page_verify_option) + ' is unknown.';
 
 END
 GO
-
-
